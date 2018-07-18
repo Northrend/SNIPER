@@ -12,3 +12,6 @@ debug/*
 *.idx
 *.lst
 *.o
+
+sniper_downloads
+lib/chips/chips.cpp
