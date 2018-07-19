@@ -36,6 +36,8 @@ def parser():
                             default='SNIPER', type=str)
     arg_parser.add_argument('--set', dest='set_cfg_list', help='Set the configuration fields from command line',
                             default=None, nargs=argparse.REMAINDER)
+    arg_parser.add_argument('--dataset', dest='dataset_dummy_name', help='Dataset name, if use dummy dataset',
+                            default='juggdet', type=str)
 
     return arg_parser.parse_args()
 
@@ -56,17 +58,18 @@ if __name__ == '__main__':
 
     # Create roidb
     image_sets = [iset for iset in config.dataset.image_set.split('+')]
+    print('=> image_sets: {}'.format(image_sets))
     roidbs = [load_proposal_roidb(config.dataset.dataset, image_set, config.dataset.root_path,
         config.dataset.dataset_path,
         proposal=config.dataset.proposal, append_gt=True, flip=config.TRAIN.FLIP,
         result_path=config.output_path,
-        proposal_path=config.proposal_path, load_mask=config.TRAIN.WITH_MASK, only_gt=not config.TRAIN.USE_NEG_CHIPS)
+        proposal_path=config.proposal_path, load_mask=config.TRAIN.WITH_MASK, only_gt=not config.TRAIN.USE_NEG_CHIPS,
+        dataset_dummy_name=args.dataset_dummy_name)
         for image_set in image_sets]
 
     roidb = merge_roidb(roidbs)
     roidb = filter_roidb(roidb, config)
     bbox_means, bbox_stds = add_bbox_regression_targets(roidb, config)
-
 
 
     print('Creating Iterator with {} Images'.format(len(roidb)))
@@ -126,6 +129,7 @@ if __name__ == '__main__':
                           eval('{}.checkpoint_callback'.format(config.symbol))(sym_inst.get_bbox_param_names(), prefix, bbox_means, bbox_stds)]
 
     train_iter = PrefetchingIter(train_iter)
+    assert 0
     mod.fit(train_iter, optimizer='sgd', optimizer_params=optimizer_params,
             eval_metric=eval_metrics, num_epoch=config.TRAIN.end_epoch, kvstore=config.default.kvstore,
             batch_end_callback=batch_end_callback,
