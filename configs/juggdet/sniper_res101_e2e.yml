@@ -5,9 +5,9 @@
 # --------------------------------------------------------------
 ---
 MXNET_VERSION: "mxnet"
-output_path: "./output/sniper_res101_bn"
+output_path: "/workspace/blademaster/model/juggdet_v6_sniper_res101_bn"
 symbol: resnet_mx_101_e2e
-gpus: '0'   # '0,1,2,3,4,5,6,7'
+gpus: '0,1,2,3,4,5,6,7'
 CLASS_AGNOSTIC: true
 default:
   kvstore: device
@@ -43,10 +43,10 @@ dataset:
   dataset_path: "./data/juggdet"
   image_set: 0503_train 
   root_path: "./data"
-  test_image_set: juggdet_0503_test 
+  test_image_set: 0503_test 
   proposal: rpn
 TRAIN:
-  USE_NEG_CHIPS: false
+  USE_NEG_CHIPS: false 
   ## CHIP GENERATION PARAMS
   # Whether to use C++ or python code for chip generation
   CPP_CHIPS: true
@@ -80,15 +80,15 @@ TRAIN:
 
 
   lr: 0.015 #0.002 #0.0005
-  lr_step: '5.33'
+  lr_step: '8.12,10.82'  # '5.33'
   warmup: true
   fp16: true
   warmup_lr: 0.0005 #0.00005
   wd: 0.0001
   scale: 100.0
-  warmup_step: 1000 #4000 #1000
+  warmup_step: 1500 #4000 #1000
   begin_epoch: 0
-  end_epoch: 7
+  end_epoch: 13
 
   # whether flip image
   FLIP: true

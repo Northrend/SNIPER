@@ -28,6 +28,7 @@ def load_proposal_roidb(dataset_name, image_set_name, root_path, dataset_path, r
 
     roidb = imdb.gt_roidb()
     if not only_gt:
+        print '=> USE_NEG_CHIPS: true'
         roidb = eval('imdb.' + proposal + '_roidb')(roidb, append_gt, proposal_path=proposal_path)
     else:
         # Make sure boxes are converted to float

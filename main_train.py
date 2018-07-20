@@ -129,7 +129,6 @@ if __name__ == '__main__':
                           eval('{}.checkpoint_callback'.format(config.symbol))(sym_inst.get_bbox_param_names(), prefix, bbox_means, bbox_stds)]
 
     train_iter = PrefetchingIter(train_iter)
-    assert 0
     mod.fit(train_iter, optimizer='sgd', optimizer_params=optimizer_params,
             eval_metric=eval_metrics, num_epoch=config.TRAIN.end_epoch, kvstore=config.default.kvstore,
             batch_end_callback=batch_end_callback,

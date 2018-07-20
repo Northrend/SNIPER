@@ -82,7 +82,7 @@ class dummy(IMDB):
         self._path_map = {
             'juggdet_0503_train': {
                 '_IM_DIR': 'juggdet_0503/Image/',
-                '_ANN_FN': 'juggdet_0503/annotations/juggdet_0503_train_0612.json'
+                '_ANN_FN': 'juggdet_0503/annotations/juggdet_0503_train_0712.json'
             },
             'juggdet_0503_test': {
                 '_IM_DIR': 'juggdet_0503/Image/',

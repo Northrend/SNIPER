@@ -7,6 +7,7 @@ import numpy as np
 from bbox.bbox_transform import bbox_pred, clip_boxes
 from iterators.PrefetchingIter import PrefetchingIter
 import os
+import cv2
 import time
 import cPickle
 from data_utils.data_workers import nms_worker
@@ -189,7 +190,6 @@ class Tester(object):
                                                                             cache_name)
                 if not os.path.isdir(visualization_path):
                     os.makedirs(visualization_path)
-                import cv2
                 im = cv2.cvtColor(cv2.imread(self.roidb[i]['image']), cv2.COLOR_BGR2RGB)
                 visualize_dets(im,
                                [[]] + [all_boxes[j][i] for j in range(1, self.num_classes)],
