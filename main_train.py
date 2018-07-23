@@ -43,7 +43,6 @@ def parser():
 
 
 if __name__ == '__main__':
-
     args = parser()
     update_config(args.cfg)
     if args.set_cfg_list:
@@ -56,9 +55,12 @@ if __name__ == '__main__':
     if not os.path.isdir(config.output_path):
         os.mkdir(config.output_path)
 
+    # Creating the Logger
+    logger, output_path = create_logger(config.output_path, args.cfg, config.dataset.image_set)
+
     # Create roidb
     image_sets = [iset for iset in config.dataset.image_set.split('+')]
-    print('=> image_sets: {}'.format(image_sets))
+    logger.info('=> image_sets: {}'.format(image_sets))
     roidbs = [load_proposal_roidb(config.dataset.dataset, image_set, config.dataset.root_path,
         config.dataset.dataset_path,
         proposal=config.dataset.proposal, append_gt=True, flip=config.TRAIN.FLIP,
@@ -72,16 +74,14 @@ if __name__ == '__main__':
     bbox_means, bbox_stds = add_bbox_regression_targets(roidb, config)
 
 
-    print('Creating Iterator with {} Images'.format(len(roidb)))
+    logger.info('Creating Iterator with {} Images'.format(len(roidb)))
     train_iter = MNIteratorE2E(roidb=roidb, config=config, batch_size=batch_size, nGPUs=nGPUs,
                                threads=config.TRAIN.NUM_THREAD, pad_rois_to=400)
-    print('The Iterator has {} samples!'.format(len(train_iter)))
+    logger.info('The Iterator has {} samples!'.format(len(train_iter)))
 
-    # Creating the Logger
-    logger, output_path = create_logger(config.output_path, args.cfg, config.dataset.image_set)
 
     # get list of fixed parameters
-    print('Initializing the model...')
+    logger.info('Initializing the model...')
     sym_inst = eval('{}.{}'.format(config.symbol, config.symbol))(n_proposals=400, momentum=args.momentum)
     sym = sym_inst.get_symbol_rcnn(config)
 
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         eval_metrics.add(mask_metric)
 
     optimizer_params = get_optim_params(config, len(train_iter), batch_size)
-    print ('Optimizer params: {}'.format(optimizer_params))
+    logger.info('Optimizer params: {}'.format(optimizer_params))
 
     # Checkpointing
     prefix = os.path.join(output_path, args.save_prefix)

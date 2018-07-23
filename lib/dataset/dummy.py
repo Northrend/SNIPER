@@ -89,16 +89,16 @@ class dummy(IMDB):
                 '_ANN_FN': 'juggdet_0503/annotations/juggdet_0503_test_0711.json'
             }
         }
-        print '=> dataset_dummy_name:', dataset_dummy_name
-        print '=> image_set:', image_set
-        print '=> root_path:', root_path
-        print '=> data_path:', data_path
-        print '=> result_path:', result_path
+        # print '=> dataset_dummy_name:', dataset_dummy_name
+        # print '=> image_set:', image_set
+        # print '=> root_path:', root_path
+        # print '=> data_path:', data_path
+        # print '=> result_path:', result_path
         self.coco = COCO(self._get_ann_file())
 
         # deal with class names
         cats = [cat['name'] for cat in self.coco.loadCats(self.coco.getCatIds())]
-        print '=> cats: {}'.format(cats)
+        # print '=> cats: {}'.format(cats)
         self.classes = ['__background__'] + cats
         self.num_classes = len(self.classes)
         self._class_to_ind = dict(zip(self.classes, xrange(self.num_classes)))
@@ -126,7 +126,7 @@ class dummy(IMDB):
         """ self.data_path/annotations/juggdet_0503_train_0612.json """
         # prefix = 'instances' if 'test' not in self.image_set else 'image_info'
         anno_file = self._path_map['{}_{}'.format(self.dataset_dummy_name, self.image_set)]['_ANN_FN'] 
-        print '=> anno_file:', anno_file
+        # print '=> anno_file:', anno_file
         return os.path.join(self.data_path, anno_file)
 
     def _load_image_set_index(self):
@@ -139,7 +139,7 @@ class dummy(IMDB):
         # filename = 'COCO_%s_%012d.jpg' % (self.data_name, index)
         filename = os.path.join(self._path_map['{}_{}'.format(self.dataset_dummy_name, self.image_set)]['_IM_DIR'], index)
         image_path = os.path.join(self.data_path, filename)
-        print '=> image_path:', image_path
+        # print '=> image_path:', image_path
         assert os.path.exists(image_path), 'Path does not exist: {}'.format(image_path)
         return image_path
 
@@ -199,7 +199,7 @@ class dummy(IMDB):
         :param index: coco image id
         :return: roidb entry
         """
-        print '=> index:',index
+        # print '=> index:',index
         im_ann = self.coco.loadImgs(index)[0]
         width = im_ann['width']
         height = im_ann['height']

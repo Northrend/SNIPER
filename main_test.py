@@ -27,6 +27,8 @@ def parser():
                             action='store_true')
     arg_parser.add_argument('--set', dest='set_cfg_list', help='Set the configuration fields from command line',
                             default=None, nargs=argparse.REMAINDER)
+    arg_parser.add_argument('--dataset', dest='dataset_dummy_name', help='Dataset name, if use dummy dataset',
+                                        default='juggdet', type=str)
     return arg_parser.parse_args()
 
 
@@ -47,12 +49,13 @@ def main():
                                       config.dataset.dataset_path,
                                       proposal=config.dataset.proposal, only_gt=True, flip=False,
                                       result_path=config.output_path,
-                                      proposal_path=config.proposal_path, get_imdb=True)
+                                      proposal_path=config.proposal_path, get_imdb=True,
+                                      dataset_dummy_name=args.dataset_dummy_name)
 
     # Creating the Logger
     logger, output_path = create_logger(config.output_path, args.cfg, config.dataset.image_set)
-    print(output_path)
-    model_prefix = os.path.join(output_path, args.save_prefix)
+    # model_prefix = os.path.join(output_path, args.save_prefix)
+    model_prefix = args.save_prefix
     arg_params, aux_params = load_param(model_prefix, config.TEST.TEST_EPOCH,
                                         convert=True, process=True)
 
