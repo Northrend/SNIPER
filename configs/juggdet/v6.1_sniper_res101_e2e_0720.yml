@@ -43,7 +43,7 @@ dataset:
   dataset_path: "./data/juggdet"
   image_set: 0503_train 
   root_path: "./data"
-  test_image_set: 0503_train    # just extract proposals 
+  test_image_set: 0503_test    # just extract proposals 
   proposal: rpn
 TRAIN:
   USE_NEG_CHIPS: true 
@@ -202,7 +202,7 @@ TEST:
   NMS_SIGMA: 0.55
 
   # Which epoch of the training be used for testing
-  TEST_EPOCH: 13
+  TEST_EPOCH: 24 
 
   # VISUALIZATION CONFIG
   VISUALIZATION_PATH: './debug/visualization'
