@@ -3,6 +3,7 @@
 # Inference module for performing detection and proposal extraction
 # Written by Mahyar Najibi
 # -----------------------------------------------------------------
+from __future__ import print_function
 import numpy as np
 from bbox.bbox_transform import bbox_pred, clip_boxes
 from iterators.PrefetchingIter import PrefetchingIter
@@ -97,6 +98,7 @@ class Tester(object):
         im_shapes = np.array([im.shape[-2:] for im in data['data']]).reshape(-1, self.batch_size, 2)
         im_ids = np.array([], dtype=int)
 
+        # print('=> outputs, scales, im_shapes:', outputs, scales, im_shapes)
         for i, (gpu_out, gpu_scales, gpu_shapes) in enumerate(zip(outputs, scales, im_shapes)):
             gpu_rois = gpu_out[self.rpn_output_names['rois']].asnumpy()
             # Reshape crois
@@ -222,6 +224,9 @@ class Tester(object):
         for batch in self.test_iter:
             im_info = batch.data[1].asnumpy()
             scales = im_info[:,2].reshape(-1,self.batch_size)
+            # print('=> batch.data[0].shape:', batch.data[0].shape)
+            # print('=> scales:', scales)
+            # print('=> im_info:', im_info)
             # Run detection on the batch
             stime = time.time()
             scores, boxes, data, im_ids = self.detect(batch, scales)

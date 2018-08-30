@@ -14,6 +14,7 @@ from train_utils.utils import create_logger, load_param
 import os
 import json
 import time
+import pprint
 from PIL import Image
 from iterators.MNIteratorTest import MNIteratorTest
 from easydict import EasyDict
@@ -46,6 +47,8 @@ def parser():
                             default='tmp.json', type=str)
     arg_parser.add_argument('--set', dest='set_cfg_list', help='Set the configuration fields from command line',
                             default=None, nargs=argparse.REMAINDER)
+    arg_parser.add_argument('--gpu', dest='gpu_id', help='gpu id', type=int,
+                            default=0)
     return arg_parser.parse_args()
 
 
@@ -57,7 +60,8 @@ def main():
         update_config_from_list(args.set_cfg_list)
 
     # Use just the first GPU for demo
-    context = [mx.gpu(int(config.gpus[0]))]
+    # context = [mx.gpu(int(config.gpus[0]))]
+    context = [mx.gpu(args.gpu_id)]
 
     if not os.path.isdir(config.output_path):
         os.mkdir(config.output_path)
@@ -104,6 +108,7 @@ def main():
     # Create the module
     shape_dict = dict(test_iter.provide_data_single)
     sym_inst.infer_shape(shape_dict)
+    pprint.pprint(shape_dict)
     mod = mx.mod.Module(symbol=sym,
                         context=context,
                         data_names=[k[0] for k in test_iter.provide_data_single],
@@ -132,6 +137,7 @@ def main():
     # Aggregate results from multiple scales and perform NMS
     tester = Tester(None, db_info, roidb, None, cfg=config, batch_size=1)
     file_name, out_extension = os.path.splitext(os.path.basename(args.im_path))
+    out_extension = 'jpg'
     all_detections = tester.aggregate(all_detections, vis=args.vis, cache_name=None, vis_path='./data/demo/',
                                           vis_name='{}_detections'.format(file_name), vis_ext=out_extension)
     # pprint.pprint(all_detections)
@@ -140,15 +146,26 @@ def main():
     tic_3 = time.time()
     # genrate json result
     result = dict()
-    for idx,img in enumerate(image_list): 
-        img_name = os.path.basename(img)
+    if args.single_image_test:
+        img_name = os.path.basename(args.im_path)
         result[img_name] = list()
         for cat_idx in range(1,db_info.num_classes):
-            bboxes = all_detections[cat_idx][idx]
+            bboxes = all_detections[cat_idx][0]
             for box in bboxes:
                 score = box[4]
                 if score >= args.thresh:
                     result[img_name].append([round(float(x),6) for x in box] + [db_info.classes[cat_idx]])
+        # pprint.pprint(result)
+    else:
+        for idx,img in enumerate(image_list): 
+            img_name = os.path.basename(img)
+            result[img_name] = list()
+            for cat_idx in range(1,db_info.num_classes):
+                bboxes = all_detections[cat_idx][idx]
+                for box in bboxes:
+                    score = box[4]
+                    if score >= args.thresh:
+                        result[img_name].append([round(float(x),6) for x in box] + [db_info.classes[cat_idx]])
     with open(args.output_json,'w') as f:
         json.dump(result,f,indent=2)
     print('=> Time Cost:\nInitialization: {:.4f}s\nInference: {:.4f}s\nPost processing: {:.4f}s\nGenerate result: {:.4f}s\nTotal: {:.4f}s'.format(tic_1-tic_0, tic_2-tic_1, tic_3-tic_2, time.time()-tic_3, time.time()-tic_0))

@@ -154,7 +154,7 @@ TRAIN:
 TEST:
   # Maximum number of detections per image
   # Set to -1 to disable
-  MAX_PER_IMAGE: 200
+  MAX_PER_IMAGE: 300 
 
   # Whether to do multi-scale inference
   SCALES:
@@ -214,7 +214,7 @@ TEST:
 
   # PROPOSAL EXTRACTION FLAGS
   # If true only would extract proposals
-  EXTRACT_PROPOSALS: true 
+  EXTRACT_PROPOSALS: false 
 
   # The folder path to be used for saving proposals
   PROPOSAL_SAVE_PATH: '/workspace/blademaster/model/juggdet_v6.1_sniper_res101_bn/output/proposals'

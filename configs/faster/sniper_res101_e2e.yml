@@ -153,13 +153,13 @@ TRAIN:
 TEST:
   # Maximum number of detections per image
   # Set to -1 to disable
-  MAX_PER_IMAGE: 200
+  MAX_PER_IMAGE: 400 
 
   # Whether to do multi-scale inference
   SCALES:
-  - !!python/tuple [1400, 2000]
+  # - !!python/tuple [1400, 2000]
   - !!python/tuple [800, 1280]
-  - !!python/tuple [480, 512]
+  # - !!python/tuple [480, 512]
 
   # Number of images per gpu for each scale
   BATCH_IMAGES:
@@ -178,9 +178,9 @@ TEST:
   # to invalidate, -1 means unbounded, use
   # -1 everywhere if you want to have all proposals
   VALID_RANGES:
-  - !!python/tuple [-1,90]
+  # - !!python/tuple [-1,90]
   - !!python/tuple [32,180]
-  - !!python/tuple [75,-1]
+  # - !!python/tuple [75,-1]
 
   # Use rpn to generate proposal
   HAS_RPN: true
